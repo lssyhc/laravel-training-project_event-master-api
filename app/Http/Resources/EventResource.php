@@ -23,7 +23,7 @@ class EventResource extends JsonResource
             'organizer' => new UserResource($this->whenLoaded('user')),
             'attendees_count' => $this->whenCounted('attendees'),
             'attendees' => AttendeeResource::collection($this->whenLoaded('attendees')),
-            'reviews_count' => $this->whenLoaded('reviews'),
+            'reviews_count' => $this->whenCounted('reviews'),
             'reviews' => ReviewResource::collection($this->whenLoaded('reviews')),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at
