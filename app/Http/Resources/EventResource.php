@@ -15,9 +15,9 @@ class EventResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'event_id' => $this->id,
-            'event_name' => $this->name,
-            'event_description' => $this->description,
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
             'start_time' => $this->start_time->format('Y-m-d H:i:s'),
             'end_time' => $this->end_time->format('Y-m-d H:i:s'),
             'organizer' => new UserResource($this->whenLoaded('user')),
