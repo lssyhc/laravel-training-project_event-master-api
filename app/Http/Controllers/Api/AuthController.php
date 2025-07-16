@@ -58,6 +58,19 @@ class AuthController extends Controller
         ]);
     }
 
+    public function userDetails(Request $request)
+    {
+        if ($request->has('include') && 'events' === trim($request->include)) {
+            $request->user()->load('events');
+        }
+
+        if ($request->has('count') && 'events' === trim($request->count)) {
+            $request->user()->loadCount('events');
+        }
+
+        return new UserResource($request->user());
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
