@@ -56,6 +56,7 @@ class EventController extends Controller
     public function show(Request $request, Event $event)
     {
         $allowedIncludes = ['user', 'attendees', 'attendees.user', 'reviews', 'reviews.user'];
+        $allowedCounts = ['attendees', 'reviews'];
 
         if ($request->has('include')) {
             $includes = collect(explode(',', $request->include))
@@ -64,6 +65,16 @@ class EventController extends Controller
 
             if ($includes->isNotEmpty()) {
                 $event->load($includes->toArray());
+            }
+        }
+
+        if ($request->has('count')) {
+            $counts = collect(explode(',', $request->count))
+                ->map(fn($count) => trim($count))
+                ->intersect($allowedCounts);
+
+            if ($counts->isNotEmpty()) {
+                $event->loadCount($counts->toArray());
             }
         }
 
