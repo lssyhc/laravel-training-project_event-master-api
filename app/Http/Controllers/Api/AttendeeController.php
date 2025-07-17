@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\VerifyEventAttendanceRequest;
 use App\Http\Resources\AttendeeResource;
 use App\Models\Attendee;
 use App\Models\Event;
@@ -25,19 +26,10 @@ class AttendeeController extends Controller
         return new AttendeeResource($attendee->load(['user', 'event']));
     }
 
-    public function store(Request $request, Event $event)
+    public function store(VerifyEventAttendanceRequest $request, Event $event)
     {
         Gate::authorize('create', Attendee::class);
-        $existingAttendee = Attendee::where('user_id', $request->user()->id)
-            ->where('event_id', $event->id)
-            ->first();
-
-        if ($existingAttendee) {
-            throw ValidationException::withMessages([
-                'user_id' => 'You are already attending this event.'
-            ]);
-        }
-
+        $request->validateAttendance();
         $attendee = $event->attendees()->create(['user_id' => $request->user()->id]);
         return new AttendeeResource($attendee);
     }
