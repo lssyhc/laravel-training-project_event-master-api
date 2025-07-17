@@ -20,5 +20,5 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('sanctum:prune-expired --hours=0')->hourly();
-    })
-    ->create();
+        $schedule->command('app:send-event-reminders')->dailyAt('02:00');
+    })->create();
