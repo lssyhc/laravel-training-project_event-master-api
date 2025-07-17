@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('events', EventController::class)->except(['index', 'show']);
     Route::apiResource('events.attendees', AttendeeController::class)
+        ->only(['index', 'show', 'store', 'destroy'])
         ->scoped()
         ->shallow();
 });
