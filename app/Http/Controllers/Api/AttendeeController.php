@@ -7,9 +7,7 @@ use App\Http\Requests\VerifyEventAttendanceRequest;
 use App\Http\Resources\AttendeeResource;
 use App\Models\Attendee;
 use App\Models\Event;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\ValidationException;
 
 class AttendeeController extends Controller
 {
