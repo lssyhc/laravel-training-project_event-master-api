@@ -16,6 +16,15 @@ class VerifyEventAttendanceRequest extends FormRequest
         return true;
     }
 
+    public function prepareForValidation(): void
+    {
+        if ($this->route('event')) {
+            $this->merge([
+                'event' => $this->route('event'),
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,26 +33,28 @@ class VerifyEventAttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'event' => 'required'
         ];
     }
 
-    public function validateAttendance(): void
+    public function validateAttendance(bool $attend): void
     {
-        if ($this->route('event')) {
-            $this->merge([
-                'event' => $this->route('event'),
-            ]);
-        }
-
         $existingAttendee = Attendee::where('user_id', $this->user()->id)
             ->where('event_id', $this->event->id)
             ->first();
 
-        if (!$existingAttendee) {
-            throw ValidationException::withMessages([
-                'user_id' => 'You have never attended this event.'
-            ]);
+        if ($attend) {
+            if ($existingAttendee) {
+                throw ValidationException::withMessages([
+                    'user_id' => 'You are already attending this event.'
+                ]);
+            }
+        } elseif (!$attend) {
+            if (!$existingAttendee) {
+                throw ValidationException::withMessages([
+                    'user_id' => 'You have never attended this event.'
+                ]);
+            }
         }
     }
 }

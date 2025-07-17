@@ -29,7 +29,7 @@ class AttendeeController extends Controller
     public function store(VerifyEventAttendanceRequest $request, Event $event)
     {
         Gate::authorize('create', Attendee::class);
-        $request->validateAttendance();
+        $request->validateAttendance(true);
         $attendee = $event->attendees()->create(['user_id' => $request->user()->id]);
         return new AttendeeResource($attendee);
     }
