@@ -7,10 +7,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::apiResource('events', EventController::class)->only(['index', 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'userDetails']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::apiResource('events', EventController::class);
-    Route::apiResource('events.attendees', AttendeeController::class)->only(['index', 'show', 'store', 'destroy'])->scoped()->shallow();
+    Route::apiResource('events', EventController::class)->except(['index', 'show']);
+    Route::apiResource('events.attendees', AttendeeController::class)
+        ->scoped()
+        ->shallow();
 });

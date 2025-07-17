@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
@@ -14,6 +15,7 @@ class EventController extends Controller
      */
     public function index(Request $request)
     {
+        Gate::authorize('viewAny', Event::class);
         $query = Event::query();
 
         if ($request->has('start_date')) {
@@ -35,6 +37,7 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        // Gate::authorize('create', Event::class);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -55,6 +58,7 @@ class EventController extends Controller
      */
     public function show(Request $request, Event $event)
     {
+        Gate::authorize('view', $event);
         $allowedIncludes = ['user', 'attendees', 'attendees.user', 'reviews', 'reviews.user'];
         $allowedCounts = ['attendees', 'reviews'];
 
@@ -86,6 +90,7 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
+        Gate::authorize('update', $event);
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
@@ -102,6 +107,7 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
+        Gate::authorize('delete', $event);
         $event->delete();
         return response()->noContent();
     }
