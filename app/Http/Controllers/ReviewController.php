@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\VerifyEventAttendanceRequest;
 use App\Http\Resources\ReviewResource;
-use App\Models\Attendee;
 use App\Models\Event;
 use App\Models\Review;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class ReviewController extends Controller
 {
@@ -43,7 +41,20 @@ class ReviewController extends Controller
         return new ReviewResource($review->load(['user', 'event']));
     }
 
-    public function update() {}
+    public function update(Request $request, Review $review)
+    {
+        $review->update(
+            $request->validate([
+                'rating' => 'sometimes|integer|min:1|max:5',
+                'comment' => 'nullable|max:255'
+            ])
+        );
+        return new ReviewResource($review);
+    }
 
-    public function destroy() {}
+    public function destroy(Review $review)
+    {
+        $review->delete();
+        return response()->noContent();
+    }
 }
