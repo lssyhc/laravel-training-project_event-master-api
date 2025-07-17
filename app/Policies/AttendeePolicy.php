@@ -45,7 +45,8 @@ class AttendeePolicy
      */
     public function delete(User $user, Attendee $attendee): bool
     {
-        return in_array($user->role, ['admin', 'organizer']) || $user->id === $attendee->user_id;
+        return $user->role === 'admin' || $user->id === $attendee->event->user_id
+            || $user->id === $attendee->user_id;
     }
 
     /**
