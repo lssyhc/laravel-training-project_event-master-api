@@ -37,7 +37,7 @@ class ReviewPolicy
      */
     public function update(User $user, Review $review): bool
     {
-        return $user->role === 'user';
+        return in_array($user->role, ['admin', 'organizer']) || $user->id === $review->user_id;
     }
 
     /**
@@ -45,7 +45,7 @@ class ReviewPolicy
      */
     public function delete(User $user, Review $review): bool
     {
-        return true;
+        return in_array($user->role, ['admin', 'organizer']) || $user->id === $review->user_id;
     }
 
     /**

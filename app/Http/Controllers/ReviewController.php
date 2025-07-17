@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 class ReviewController extends Controller
 {
@@ -29,15 +30,25 @@ class ReviewController extends Controller
         Gate::authorize('create', Review::class);
         $request->validateAttendance(false);
 
+        $hasReview = Review::where('user_id', $request->user()->id)
+            ->where('event_id', $event->id)
+            ->exists();
+
+        if ($hasReview) {
+            return ValidationException::withMessages([
+                'user_id' => 'You have already reviewed this event.'
+            ]);
+        }
+
         $review = $event->reviews()->create([
             ...$request->validate([
                 'rating' => 'required|integer|min:1|max:5',
-                'review' => 'nullable|max:255'
+                'comment' => 'nullable|max:255'
             ]),
             'user_id' => $request->user()->id,
             'event_id' => $event->id
         ]);
-        return new ReviewResource($review);
+        return new ReviewResource($review->load('user'));
     }
 
     public function show(Review $review)
