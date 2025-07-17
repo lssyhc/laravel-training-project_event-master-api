@@ -11,7 +11,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::apiResource('events', EventController::class)->only(['index', 'show']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum', 'throttle:api')->group(function () {
     Route::get('/user', [AuthController::class, 'userDetails']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
